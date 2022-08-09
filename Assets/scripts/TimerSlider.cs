@@ -312,7 +312,7 @@ public class TimerSlider : MonoBehaviour
             levelUp = true;
         }else if (type == 2 && level == 7)
         {
-            Application.Quit();//çýkýþ koþulu
+            //çýkýþ koþulu
         }
         if (type == 3)
         {
