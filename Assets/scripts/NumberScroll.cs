@@ -46,11 +46,11 @@ public class NumberScroll : MonoBehaviour
             scroll.UnPause();
             positionLeft = (((int)left.localPosition.y + 63) / 100);
             positionRight = (((int)right.localPosition.y + 63) / 100);
-            if (positionLeft == 10)
+            if (positionLeft > 9)
             {
                 positionLeft = 9;
             }
-            if (positionRight == 10)
+            if (positionRight > 9)
             {
                 positionRight = 9;
             }
@@ -88,6 +88,10 @@ public class NumberScroll : MonoBehaviour
                 ques[select].text = positionLeft + "" + positionRight;
             else
                 ques[select].text = "" + positionRight;
+        }
+        for (int i = 0; i < ques.Length; i++)
+        {
+            ques[i].fontSize = 100;
         }
     }
     public void StartDragLeft()
@@ -147,7 +151,7 @@ public class NumberScroll : MonoBehaviour
 
         for(int i = 0; i < 3; i++)
         {
-            StartCoroutine(Fade(TimerSlider.quesNum[i],i));
+            StartCoroutine(Clicker(TimerSlider.quesNum[i],i));
             yield return new WaitWhile(() => !TruePick);
             TruePick = false;
         }
@@ -157,7 +161,7 @@ public class NumberScroll : MonoBehaviour
 
 
     }
-    IEnumerator Fade(int k,int result)
+    IEnumerator Clicker(int k,int result)
     {
         StartCoroutine(pickTimer());
         int counter = 0;
@@ -173,7 +177,7 @@ public class NumberScroll : MonoBehaviour
                 Click[k].color = new Color(1, 1, 1, i);
                 yield return null;
             }
-            
+            yield return new WaitForSeconds(1f);
             for (float i = 1; i >= 0; i -= Time.deltaTime)
             {
                 if (select == k)
@@ -256,7 +260,7 @@ public class NumberScroll : MonoBehaviour
                 Click[6].color = new Color(1, 1, 1, i);
                 yield return null;
             }
-
+            yield return new WaitForSeconds(1f);
             for (float i = 1; i >= 0; i -= Time.deltaTime)
             {
                 if (dragRight || dragLeft)
@@ -264,7 +268,6 @@ public class NumberScroll : MonoBehaviour
                     Click[6].color = new Color(1, 1, 1, 0);
                     break;
                 }
-                // set color with i as alpha
                 Click[6].color = new Color(1, 1, 1, i);
                 yield return null;
             }
@@ -294,7 +297,7 @@ public class NumberScroll : MonoBehaviour
                 Click[7].color = new Color(1, 1, 1, i);
                 yield return null;
             }
-
+            yield return new WaitForSeconds(1f);
             for (float i = 1; i >= 0; i -= Time.deltaTime)
             {
                 if (Comparator.pick)
@@ -314,16 +317,42 @@ public class NumberScroll : MonoBehaviour
     IEnumerator pickTimer()
     {
         float StartTime = Time.time;
-        while (Time.time - StartTime < 3)
+        while (Time.time - StartTime < 5)
             yield return null;
         pickTime = false;
     }
     void autoPick(int result)
     {
+        
         positionLeft = result/10;
         positionRight = result%10;
         write();
-        ques[select].fontSize = 100;
         pickTime = true;
+        
+    }
+    IEnumerator Fade(bool exit,int number)
+    {
+        for (float i = 0; i <= 1; i += Time.deltaTime)
+        {
+            if (Comparator.pick)
+            {
+                Click[7].color = new Color(1, 1, 1, 0);
+                break;
+            }
+            Click[7].color = new Color(1, 1, 1, i);
+            yield return null;
+        }
+        yield return new WaitForSeconds(1f);
+        for (float i = 1; i >= 0; i -= Time.deltaTime)
+        {
+            if (Comparator.pick)
+            {
+                Click[7].color = new Color(1, 1, 1, 0);
+                break;
+            }
+            // set color with i as alpha
+            Click[7].color = new Color(1, 1, 1, i);
+            yield return null;
+        }
     }
 }
