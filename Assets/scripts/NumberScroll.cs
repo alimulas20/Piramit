@@ -22,7 +22,7 @@ public class NumberScroll : MonoBehaviour
     
     bool TruePick;
     public static bool LearnEnd;
-    bool pickTime;//doðru seçim zamanlamasý için
+    bool [] pickTime;//doðru seçim zamanlamasý için
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +30,11 @@ public class NumberScroll : MonoBehaviour
         positionLeft = (((int)left.localPosition.y+63)/100);
         positionRight = (((int)right.localPosition.y+63) / 100);
         LearnEnd = true;
-        pickTime = true;
+        pickTime = new bool[12];
+        for(int i = 0; i < pickTime.Length; i++)
+        {
+            pickTime[i] = true;
+        }
     }
 
     // Update is called once per frame
@@ -55,10 +59,9 @@ public class NumberScroll : MonoBehaviour
                 positionRight = 9;
             }
            
-            else
-            {
+            if(!(TimerSlider.type==2&&select==-1))//6 lý piramitte týklamadan yazmayý engelleme
                 write();
-            }
+            
             
         }
         else
@@ -163,9 +166,9 @@ public class NumberScroll : MonoBehaviour
     }
     IEnumerator Clicker(int k,int result)
     {
-        StartCoroutine(pickTimer());
+        StartCoroutine(pickTimer(k));
         int counter = 0;
-        while(select!=k&&pickTime)
+        while(select!=k&&pickTime[k])
         {
             for (float i = 0; i <= 1; i += Time.deltaTime)
             {
@@ -191,10 +194,10 @@ public class NumberScroll : MonoBehaviour
          
             counter++;
         }
-        if (!pickTime)
+        if (!pickTime[k])
         {
             select = k;
-            pickTime = true;
+            pickTime[k] = true;
         }
         ques[k].fontSize = 65;
         if (k == 0)
@@ -247,8 +250,8 @@ public class NumberScroll : MonoBehaviour
     }
     IEnumerator ScrollFade(int k,int result)
     {
-        StartCoroutine(pickTimer());
-        while (!(dragRight||dragLeft|| !pickTime))
+        StartCoroutine(pickTimer(5+k));
+        while (!(dragRight||dragLeft|| !pickTime[5+k]))
         {
             for (float i = 0; i <= 1; i += Time.deltaTime)
             {
@@ -273,11 +276,11 @@ public class NumberScroll : MonoBehaviour
             }
         }
         
-        yield return new WaitWhile(() =>  pickTime&&int.Parse(ques[k].text) != TimerSlider.result[result]);
-        if (!pickTime)
+        yield return new WaitWhile(() =>  pickTime[5+k]&&int.Parse(ques[k].text) != TimerSlider.result[result]);
+        if (!pickTime[5+k])
         {
-            autoPick(TimerSlider.result[result]);
-            yield return new WaitWhile(() => !pickTime);
+            autoPick(TimerSlider.result[result],5+k);
+            yield return new WaitWhile(() => !pickTime[5+k]);
         }
         TruePick = true;
     }
@@ -314,45 +317,22 @@ public class NumberScroll : MonoBehaviour
         TruePick = true;
         
     }
-    IEnumerator pickTimer()
+    IEnumerator pickTimer(int k)
     {
         float StartTime = Time.time;
         while (Time.time - StartTime < 5)
             yield return null;
-        pickTime = false;
+        pickTime[k] = false;
     }
-    void autoPick(int result)
+    void autoPick(int result,int k)
     {
         
         positionLeft = result/10;
         positionRight = result%10;
         write();
-        pickTime = true;
+        pickTime[k] = true;
         
     }
-    IEnumerator Fade(bool exit,int number)
-    {
-        for (float i = 0; i <= 1; i += Time.deltaTime)
-        {
-            if (Comparator.pick)
-            {
-                Click[7].color = new Color(1, 1, 1, 0);
-                break;
-            }
-            Click[7].color = new Color(1, 1, 1, i);
-            yield return null;
-        }
-        yield return new WaitForSeconds(1f);
-        for (float i = 1; i >= 0; i -= Time.deltaTime)
-        {
-            if (Comparator.pick)
-            {
-                Click[7].color = new Color(1, 1, 1, 0);
-                break;
-            }
-            // set color with i as alpha
-            Click[7].color = new Color(1, 1, 1, i);
-            yield return null;
-        }
-    }
+   
+    
 }

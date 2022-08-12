@@ -18,7 +18,7 @@ public class TimerSlider : MonoBehaviour
     public GameObject mult1;
     public GameObject mult2;
     public GameObject mult3;
-    public GameObject[] back;
+    public Image[] back;
     public static int [] result=new int[3];
     public static int[] quesNum = new int[3];
 
@@ -38,6 +38,8 @@ public class TimerSlider : MonoBehaviour
 
     public static bool timeBraker;
     static float brokenTime;
+    bool learnedBefore;
+
 
     static int backCount; 
     Vector3 []konum=new Vector3[2];
@@ -50,6 +52,8 @@ public class TimerSlider : MonoBehaviour
         timerSlider.value = gameTime;
         timeBraker = false;
         StartCoroutine(numberGenerator());
+        backCount = -1;
+        learnedBefore = false;
     }
 
     // Update is called once per frame
@@ -86,7 +90,7 @@ public class TimerSlider : MonoBehaviour
        
         while (!stopTimer&&!(type==2&&level==7))
         {
-            BackGround();
+           
             if (type == 1)
             {
                
@@ -210,8 +214,12 @@ public class TimerSlider : MonoBehaviour
                     numbers[2] = numbers[4] + numbers[5];
                     numbers[1] = numbers[3] + numbers[4];
                     numbers[0] = numbers[1] + numbers[2];
-
-                    timerStop();
+                    if (!learnedBefore)
+                    {
+                        timerStop();
+                        learnedBefore = true;
+                    }
+                    
                     
                 }
                 else if (level == 2)
@@ -301,19 +309,21 @@ public class TimerSlider : MonoBehaviour
 
             yield return new WaitWhile(() => !picker);
             picker = false;
+            BackGround();
         }
         if (stopTimer)
         {
             //çýkýþ koþulu 2
-        }  
+        }
+       
     }
     public static void win()
     {
-
+        
         penalty -= 3;
         level++;
         backCount++;
-        if (level == 2)
+        if (level == 6)
         {
             level = 1;
             type++;
@@ -344,8 +354,8 @@ public class TimerSlider : MonoBehaviour
     }
     void BackGround()
     {
-        if(backCount<11)//resim sayýsý artarsa artabilir
-        back[backCount].SetActive(true);
+        if (backCount < 15)//resim sayýsý artarsa artabilir
+            back[backCount].DOFade(1, 1f);
     }
     public void IncLevel()
     {
