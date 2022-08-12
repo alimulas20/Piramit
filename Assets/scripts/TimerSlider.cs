@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class TimerSlider : MonoBehaviour
 {
@@ -33,6 +34,11 @@ public class TimerSlider : MonoBehaviour
     public static int pickCount;
     static bool levelUp = false;
 
+    public static int quesType;
+
+    public static bool timeBraker;
+    static float brokenTime;
+
     static int backCount; 
     Vector3 []konum=new Vector3[2];
     // Start is called before the first frame update
@@ -42,6 +48,7 @@ public class TimerSlider : MonoBehaviour
         picker = false;
         timerSlider.maxValue = gameTime;
         timerSlider.value = gameTime;
+        timeBraker = false;
         StartCoroutine(numberGenerator());
     }
 
@@ -56,7 +63,8 @@ public class TimerSlider : MonoBehaviour
         }
         if (stopTimer == false)
         {
-            timerSlider.value = time;
+            if(!timeBraker)
+                timerSlider.value = time;
         }
        for(int i=0 ; i < (type+1)*(type +2)/2; i++)
        {
@@ -99,6 +107,7 @@ public class TimerSlider : MonoBehaviour
                 }
                 else if(level ==2)
                 {
+                    
                     numbers[2] = Random.Range(5, 10);
                     numbers[1] = Random.Range(11, 20);
                     numbers[0] = numbers[2] + numbers[1];
@@ -192,6 +201,7 @@ public class TimerSlider : MonoBehaviour
                 }
                 if (level == 1)
                 {
+                    
                     plus2.SetActive(true);
                     plus3.SetActive(true);
                     numbers[5] = Random.Range(1, 10);
@@ -200,7 +210,11 @@ public class TimerSlider : MonoBehaviour
                     numbers[2] = numbers[4] + numbers[5];
                     numbers[1] = numbers[3] + numbers[4];
                     numbers[0] = numbers[1] + numbers[2];
-                }else if (level == 2)
+
+                    timerStop();
+                    
+                }
+                else if (level == 2)
                 {
                     numbers[5] = Random.Range(2, 10);
                     numbers[4] = Random.Range(5, 10);
@@ -244,7 +258,6 @@ public class TimerSlider : MonoBehaviour
                     numbers[1] = numbers[3] * numbers[4];
                     numbers[0] = numbers[1] * numbers[2];
                 }
-                int quesType;
                 if (level < 5)
                 {
                     quesType = Random.Range(0, 4);
@@ -300,7 +313,7 @@ public class TimerSlider : MonoBehaviour
         penalty -= 3;
         level++;
         backCount++;
-        if (level == 6)
+        if (level == 2)
         {
             level = 1;
             type++;
@@ -346,12 +359,15 @@ public class TimerSlider : MonoBehaviour
                 dimension.y = 125;
                 t.sizeDelta = dimension;
                 piramits[i].SetActive(true);
+                Image image = piramits[i].GetComponent<Image>();
+                StartCoroutine( Fade(image,num[i]));
                 if (i == 1 || i == 2)
                 {
+                    
+                    t.DOLocalMove(new Vector3(140 * Mathf.Pow(-1, i), -225, 0),0.5f).SetEase(Ease.Linear).SetAutoKill();
                     konum[i-1] = t.localPosition;
-                    t.localPosition= new Vector3(140*Mathf.Pow(-1,i),350, 0);
-                    mult1.transform.localPosition= new Vector3(0, 350, 0);
-                    plus1.transform.localPosition= new Vector3(0, 350, 0); 
+                    mult1.transform.DOLocalMove(new Vector3(0, -225, 0),0.5f).SetEase(Ease.Linear).SetAutoKill();
+                    plus1.transform.DOLocalMove(new Vector3(0, -225, 0), 0.5f).SetEase(Ease.Linear).SetAutoKill();
                 }
                 
             }
@@ -373,11 +389,37 @@ public class TimerSlider : MonoBehaviour
 
             if (i == 1 || i == 2)
             {
-                t.localPosition = konum[i-1];
+                t.DOLocalMove(konum[i - 1], 0.5f);
                 mult1.SetActive(true);
-                mult1.transform.localPosition = new Vector3(0, 334, 0);
+                mult1.transform.localPosition = new Vector3(0, -250, 0);
             }
 
+        }
+    }
+    public static void timerStop()
+    {
+        timeBraker = true;
+        brokenTime = Time.time;
+    }
+    public static void timerStart()
+    {
+        if (timeBraker)
+        {
+            penalty -= (int)(Time.time - brokenTime);
+            timeBraker = false;
+        }
+            
+    }
+    IEnumerator Fade( Image image,Text text)
+    {
+       
+        
+        while (image.color.a < 255)
+        {                   //use "< 1" when fading in
+            float a = image.color.a + Time.deltaTime / 1;
+            image.color = new Color(255,255,255, a);
+            text.color = new Color(0, 0, 0, a);
+            yield return null;
         }
     }
 }

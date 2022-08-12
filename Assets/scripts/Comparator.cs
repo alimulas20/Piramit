@@ -8,9 +8,11 @@ public class Comparator : MonoBehaviour
     public Text[] ans;
     int result;
     public static int onayCount;
+    public static bool pick;
     void Start()
     {
         result = TimerSlider.result[0];
+        pick = false;
     }
     void Update()
     {
@@ -19,62 +21,57 @@ public class Comparator : MonoBehaviour
     }
     public void onay()
     {
-        if (TimerSlider.type == 1)
-        {   
-            int ansNum;
-            int.TryParse(ans[TimerSlider.quesNum[0]].text, out ansNum);
-            if (ansNum == result)
-            {
-                TimerSlider.win();
-            }
-            else
-            {
-                TimerSlider.lose();
-            }
-        }
-        else if(TimerSlider.type==2)
+
+        
+        if (NumberScroll.LearnEnd)
         {
-            
-            
-            bool lose = false;
-            for(int i = 0; i < TimerSlider.result.Length; i++)
+            if (TimerSlider.type == 1)
             {
                 int ansNum;
-                int.TryParse(ans[TimerSlider.quesNum[i]].text, out ansNum);
-                if (TimerSlider.result[i] != ansNum)
-                {
-                    lose = true;
-                    break;
-                }
-            }
-            if (lose)
-            {
-                TimerSlider.lose();
-            }
-            else
-            {
-                TimerSlider.win();
-            }
-            /*if (ansNum == TimerSlider.result[onayCount]) //seçim yaptýrmadan yazma
-            {
-                onayCount++;
-                if (onayCount == 3)
+                int.TryParse(ans[TimerSlider.quesNum[0]].text, out ansNum);
+                if (ansNum == result)
                 {
                     TimerSlider.win();
-                    onayCount = 0;
-                }else
-                ans[TimerSlider.quesNum[onayCount]].text = "?";
-            }    
-            else
+                }
+                else
+                {
+                    TimerSlider.lose();
+                }
+            }
+            else if (TimerSlider.type == 2)
             {
-                TimerSlider.lose();
-                onayCount = 0;
-            }*/
-            
-            
-            
+
+
+                bool lose = false;
+                for (int i = 0; i < TimerSlider.result.Length; i++)
+                {
+                    int ansNum;
+                    int.TryParse(ans[TimerSlider.quesNum[i]].text, out ansNum);
+                    if (TimerSlider.result[i] != ansNum)
+                    {
+                        lose = true;
+                        break;
+                    }
+                }
+                if (lose)
+                {
+                    TimerSlider.lose();
+                }
+                else
+                {
+                    TimerSlider.win();
+                }
+            }
+
+            NumberScroll.select = -1;
+        }else if (!TimerSlider.timeBraker)
+        {
+            NumberScroll.LearnEnd = true;
+            pick = true;
+            onay();
         }
-        NumberScroll.select = -1;
+        
+        
         
     }
    
