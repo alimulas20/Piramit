@@ -15,7 +15,7 @@ public class Comparator : MonoBehaviour
         pick = false;
     }
     void Update()
-    {
+    { 
         if(TimerSlider.type==1)
         result = TimerSlider.result[0];
     }
@@ -70,9 +70,6 @@ public class Comparator : MonoBehaviour
             pick = true;
             onay();
         }
-        
-        
-        
     }
    
 }

@@ -480,6 +480,13 @@ MonoBehaviour:
   - {fileID: 1170339821}
   - {fileID: 1488797036}
   - {fileID: 593175225}
+  buttons:
+  - {fileID: 661202149}
+  - {fileID: 1296290445}
+  - {fileID: 1568512038}
+  - {fileID: 620305035}
+  - {fileID: 1907022984}
+  - {fileID: 1229663586}
 --- !u!1 &110807958
 GameObject:
   m_ObjectHideFlags: 0
@@ -912,6 +919,9 @@ MonoBehaviour:
   mult1: {fileID: 368829064}
   mult2: {fileID: 1425264741}
   mult3: {fileID: 835303592}
+  onay: {fileID: 964432887}
+  left: {fileID: 1396356289}
+  right: {fileID: 531391523}
   back:
   - {fileID: 962367047}
   - {fileID: 502094326}

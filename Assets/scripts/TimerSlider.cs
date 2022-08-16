@@ -18,14 +18,24 @@ public class TimerSlider : MonoBehaviour
     public GameObject mult1;
     public GameObject mult2;
     public GameObject mult3;
+
+
+    public GameObject onay;
+    public GameObject left;
+    public GameObject right;
+
+
+
+
     public Image[] back;
+    
     public static int [] result=new int[3];
     public static int[] quesNum = new int[3];
 
 
     
     public float gameTime;
-    private bool stopTimer;
+    public static bool stopTimer;
 
     private static bool picker;
     public static int penalty=0;
@@ -61,29 +71,47 @@ public class TimerSlider : MonoBehaviour
     {
         float time = gameTime - Time.time;
         time -= penalty;
-        if (time <= 0)
+        if (time <= 0&&!stopTimer)
         {
-            stopTimer = true;   
+            stopTimer = true;
+            if (!timeBraker)
+            {
+                for (int i = 0; i < piramits.Length; i++)
+                {
+                    piramits[i].SetActive(false);
+                }
+                timerSlider.gameObject.SetActive(false);
+                plus1.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                plus2.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                plus3.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                mult1.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                mult2.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                mult3.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                onay.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                left.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                right.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+            }
+            
         }
         if (stopTimer == false)
         {
-            if(!timeBraker)
+            if (!timeBraker)
                 timerSlider.value = time;
-        }
-       for(int i=0 ; i < (type+1)*(type +2)/2; i++)
-       {
-            
-            if(type==1&&quesNum[0]!=i)
-                num[i].text= numbers[i].ToString();
-            else if (type == 2)
+
+            for (int i = 0; i < (type + 1) * (type + 2) / 2; i++)
             {
-                if (System.Array.IndexOf(quesNum, i) == -1)
-                {
+
+                if (type == 1 && quesNum[0] != i)
                     num[i].text = numbers[i].ToString();
+                else if (type == 2)
+                {
+                    if (System.Array.IndexOf(quesNum, i) == -1)
+                    {
+                        num[i].text = numbers[i].ToString();
+                    }
                 }
             }
-       }
-        
+        }
     }
     public IEnumerator numberGenerator()
     {
@@ -311,11 +339,11 @@ public class TimerSlider : MonoBehaviour
             picker = false;
             BackGround();
         }
-        if (stopTimer)
-        {
-            //çýkýþ koþulu 2
-        }
-       
+        
+        
+            
+        
+
     }
     public static void win()
     {
@@ -323,7 +351,7 @@ public class TimerSlider : MonoBehaviour
         penalty -= 3;
         level++;
         backCount++;
-        if (level == 6)
+        if (level == 2)
         {
             level = 1;
             type++;
@@ -354,7 +382,7 @@ public class TimerSlider : MonoBehaviour
     }
     void BackGround()
     {
-        if (backCount < 15)//resim sayýsý artarsa artabilir
+        if (backCount < 15&&backCount>=0)//resim sayýsý artarsa artabilir
             back[backCount].DOFade(1, 1f);
     }
     public void IncLevel()
@@ -370,7 +398,8 @@ public class TimerSlider : MonoBehaviour
                 t.sizeDelta = dimension;
                 piramits[i].SetActive(true);
                 Image image = piramits[i].GetComponent<Image>();
-                StartCoroutine( Fade(image,num[i]));
+                image.DOFade(1, 0.5f);
+                num[i].DOFade(1, 0.5f);
                 if (i == 1 || i == 2)
                 {
                     
@@ -419,17 +448,5 @@ public class TimerSlider : MonoBehaviour
             timeBraker = false;
         }
             
-    }
-    IEnumerator Fade( Image image,Text text)
-    {
-       
-        
-        while (image.color.a < 255)
-        {                   //use "< 1" when fading in
-            float a = image.color.a + Time.deltaTime / 1;
-            image.color = new Color(255,255,255, a);
-            text.color = new Color(0, 0, 0, a);
-            yield return null;
-        }
     }
 }
