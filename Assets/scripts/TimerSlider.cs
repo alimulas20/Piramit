@@ -39,7 +39,7 @@ public class TimerSlider : MonoBehaviour
 
     private static bool picker;
     public static int penalty=0;
-    public static int level = 1;
+    public static int level = -1;
     public static int type = 1;
     public static int pickCount;
     static bool levelUp = false;
@@ -116,101 +116,193 @@ public class TimerSlider : MonoBehaviour
     public IEnumerator numberGenerator()
     {
        
-        while (!stopTimer&&!(type==2&&level==7))
+        while (!stopTimer)
         {
-           
+            if (level == -1)
+            {
+                numbers[2] = Random.Range(1, 10);
+                numbers[1] = Random.Range(1, 10);
+                numbers[0] = numbers[2] + numbers[1];
+                timerStop();
+            }
+            else if (level == 0)
+            {
+                IncLevel();
+                plus2.SetActive(true);
+                plus3.SetActive(true);
+                numbers[5] = Random.Range(1, 10);
+                numbers[4] = Random.Range(1, 10);
+                numbers[3] = Random.Range(1, 10);
+                numbers[2] = numbers[4] + numbers[5];
+                numbers[1] = numbers[3] + numbers[4];
+                numbers[0] = numbers[1] + numbers[2];
+                timerStop();
+            }
+            else if (level == 1)
+            {
+                DecLevel();
+
+                for (int i = 0; i < numbers.Length; i++)
+                {
+                    numbers[i] = 0;
+                }
+                plus1.SetActive(true);
+                plus2.SetActive(false);
+                plus3.SetActive(false);
+                mult1.SetActive(false);
+                mult2.SetActive(false);
+                mult3.SetActive(false);
+                numbers[2] = Random.Range(1, 10);
+                numbers[1] = Random.Range(1, 10);
+                numbers[0] = numbers[2] + numbers[1];
+            }
+            else if (level == 2)
+            {
+
+                numbers[2] = Random.Range(5, 10);
+                numbers[1] = Random.Range(11, 20);
+                numbers[0] = numbers[2] + numbers[1];
+            }
+            else if (level == 3)
+            {
+                numbers[2] = Random.Range(11, 20);
+                numbers[1] = Random.Range(11, 20);
+                numbers[0] = numbers[2] + numbers[1];
+            }
+            else if (level == 4)
+            {
+                numbers[2] = Random.Range(11, 50);
+                numbers[1] = Random.Range(11, 50);
+                if (numbers[1] % 10 == 0)
+                {
+                    numbers[1] += Random.Range(1, 10);
+                }
+                if (numbers[2] % 10 == 0)
+                {
+                    numbers[2] += Random.Range(1, 10);
+                }
+                numbers[0] = numbers[2] + numbers[1];
+            }
+            else if (level == 5)
+            {
+                numbers[2] = Random.Range(31, 50);
+                numbers[1] = Random.Range(31, 50);
+                if (numbers[1] % 10 == 0)
+                {
+                    numbers[1] += Random.Range(1, 10);
+                }
+                if (numbers[2] % 10 == 0)
+                {
+                    numbers[2] += Random.Range(1, 10);
+                }
+                numbers[0] = numbers[2] + numbers[1];
+            }
+            if (level == 6)
+            {
+                IncLevel();
+                plus2.SetActive(true);
+                plus3.SetActive(true);
+                numbers[5] = Random.Range(1, 10);
+                numbers[4] = Random.Range(1, 10);
+                numbers[3] = Random.Range(1, 10);
+                numbers[2] = numbers[4] + numbers[5];
+                numbers[1] = numbers[3] + numbers[4];
+                numbers[0] = numbers[1] + numbers[2];
+            }
+            else if (level == 7)
+            {
+                numbers[5] = Random.Range(2, 10);
+                numbers[4] = Random.Range(5, 10);
+                numbers[3] = Random.Range(10, 25);
+                numbers[2] = numbers[4] + numbers[5];
+                numbers[1] = numbers[3] + numbers[4];
+                numbers[0] = numbers[1] + numbers[2];
+            }
+            else if (level == 8)
+            {
+                numbers[5] = Random.Range(5, 10);
+                numbers[4] = Random.Range(10, 25);
+                numbers[3] = Random.Range(10, 25);
+                numbers[2] = numbers[4] + numbers[5];
+                numbers[1] = numbers[3] + numbers[4];
+                numbers[0] = numbers[1] + numbers[2];
+            }
+            else if (level == 9)
+            {
+                numbers[5] = Random.Range(10, 25);
+                numbers[4] = Random.Range(10, 25);
+                numbers[3] = Random.Range(10, 25);
+                numbers[2] = numbers[4] + numbers[5];
+                numbers[1] = numbers[3] + numbers[4];
+                numbers[0] = numbers[1] + numbers[2];
+            }
+            else if (level == 10)
+            {
+                numbers[5] = Random.Range(20, 50);
+                numbers[4] = Random.Range(20, 50);
+                numbers[3] = Random.Range(20, 50);
+                numbers[2] = numbers[4] + numbers[5];
+                numbers[1] = numbers[3] + numbers[4];
+                numbers[0] = numbers[1] + numbers[2];
+            }
+            else if (level == 11)
+                {
+                DecLevel();
+
+                for (int i = 0; i < numbers.Length; i++)
+                {
+                    numbers[i] = 0;
+                }
+                plus1.SetActive(false);
+                plus2.SetActive(false);
+                plus3.SetActive(false);
+                mult1.SetActive(true);
+                mult2.SetActive(false);
+                mult3.SetActive(false);
+                numbers[2] = Random.Range(1, 10);
+                numbers[1] = Random.Range(1, 10);
+                numbers[0] = numbers[2] * numbers[1];
+            }
+            else if (level == 12)
+            {
+                numbers[2] = Random.Range(2, 6);
+                numbers[1] = Random.Range(11, 20);
+                numbers[0] = numbers[2] * numbers[1];
+            }
+            else if (level == 13)
+            {
+                numbers[2] = Random.Range(11, 20);
+                numbers[1] = Random.Range(11, 20);
+                numbers[0] = numbers[2] * numbers[1];
+            }
+            else if (level == 14)
+            {
+                numbers[2] = Random.Range(11, 50);
+                numbers[1] = Random.Range(11, 50);
+                if (numbers[1] % 10 == 0)
+                {
+                    numbers[1] += Random.Range(1, 10);
+                }
+                if (numbers[2] % 10 == 0)
+                {
+                    numbers[2] += Random.Range(1, 10);
+                }
+                numbers[0] = numbers[2] * numbers[1];
+            }
+            else if (level == 15)
+            {
+                mult2.SetActive(true);
+                mult3.SetActive(true);
+                numbers[5] = Random.Range(4, 7);
+                numbers[4] = Random.Range(4, 6);
+                numbers[3] = Random.Range(4, 7);
+                numbers[2] = numbers[4] * numbers[5];
+                numbers[1] = numbers[3] * numbers[4];
+                numbers[0] = numbers[1] * numbers[2];
+            }
             if (type == 1)
             {
-               
-                if (levelUp)
-                {
-                    DecLevel();
-                    levelUp = false;
-                    for(int i = 0; i < numbers.Length; i++)
-                    {
-                        numbers[i] =0;
-                    }
-                }
-                if (level == 1)
-                {
-                    numbers[2] = Random.Range(1, 10);
-                    numbers[1] = Random.Range(1, 10);
-                    numbers[0] = numbers[2] + numbers[1];                   
-                }
-                else if(level ==2)
-                {
-                    
-                    numbers[2] = Random.Range(5, 10);
-                    numbers[1] = Random.Range(11, 20);
-                    numbers[0] = numbers[2] + numbers[1];
-                }
-                else if(level==3)
-                {
-                    numbers[2] = Random.Range(11, 20);
-                    numbers[1] = Random.Range(11, 20);
-                    numbers[0] = numbers[2] + numbers[1];
-                }else if (level == 4)
-                {
-                    numbers[2] = Random.Range(11, 50);
-                    numbers[1] = Random.Range(11, 50);
-                    if (numbers[1] % 10 == 0)
-                    {
-                        numbers[1] += Random.Range(1, 10);
-                    }
-                    if (numbers[2] % 10 == 0)
-                    {
-                        numbers[2] += Random.Range(1, 10);
-                    }
-                    numbers[0] = numbers[2] + numbers[1];
-                }
-                else if(level==5)
-                {
-                    numbers[2] = Random.Range(31, 50);
-                    numbers[1] = Random.Range(31, 50);
-                    if (numbers[1] % 10 == 0)
-                    {
-                        numbers[1] += Random.Range(1, 10);
-                    }
-                    if (numbers[2] % 10 == 0)
-                    {
-                        numbers[2] += Random.Range(1, 10);
-                    }
-                    numbers[0] = numbers[2] + numbers[1];
-                }else if (level == 6)
-                {
-                    plus1.SetActive(false);
-                    plus2.SetActive(false);
-                    plus3.SetActive(false);
-                    mult1.SetActive(true);
-                    mult2.SetActive(false);
-                    mult3.SetActive(false);
-                    numbers[2] = Random.Range(1, 10);
-                    numbers[1] = Random.Range(1, 10);
-                    numbers[0] = numbers[2] * numbers[1];
-                }else if (level == 7)
-                {
-                    numbers[2] = Random.Range(2, 6);
-                    numbers[1] = Random.Range(11, 20);
-                    numbers[0] = numbers[2] * numbers[1];
-                }else if(level==8){
-                    numbers[2] = Random.Range(11, 20);
-                    numbers[1] = Random.Range(11, 20);
-                    numbers[0] = numbers[2] * numbers[1];
-                }else if (level == 9)
-                {
-                    numbers[2] = Random.Range(11, 50);
-                    numbers[1] = Random.Range(11, 50);
-                    if (numbers[1] % 10 == 0)
-                    {
-                        numbers[1] += Random.Range(1, 10);
-                    }
-                    if (numbers[2] % 10 == 0)
-                    {
-                        numbers[2] += Random.Range(1, 10);
-                    }
-                    numbers[0] = numbers[2] * numbers[1];
-                }
-                if (level < 8)
+                if (level < 13)
                 {
                     quesNum[0] = Random.Range(0, 3);
                 }
@@ -220,80 +312,10 @@ public class TimerSlider : MonoBehaviour
                 }
                 result[0] = numbers[quesNum[0]];
                 num[quesNum[0]].text = "?";
-
             }
-             
-           
-            if (type == 2)
+            else
             {
-                if (levelUp)
-                {
-                    IncLevel();
-                    levelUp = false;
-                }
-                if (level == 1)
-                {
-                    
-                    plus2.SetActive(true);
-                    plus3.SetActive(true);
-                    numbers[5] = Random.Range(1, 10);
-                    numbers[4] = Random.Range(1, 10);
-                    numbers[3] = Random.Range(1, 10);
-                    numbers[2] = numbers[4] + numbers[5];
-                    numbers[1] = numbers[3] + numbers[4];
-                    numbers[0] = numbers[1] + numbers[2];
-                    if (!learnedBefore)
-                    {
-                        timerStop();
-                        learnedBefore = true;
-                    }
-                    
-                    
-                }
-                else if (level == 2)
-                {
-                    numbers[5] = Random.Range(2, 10);
-                    numbers[4] = Random.Range(5, 10);
-                    numbers[3] = Random.Range(10, 25);
-                    numbers[2] = numbers[4] + numbers[5];
-                    numbers[1] = numbers[3] + numbers[4];
-                    numbers[0] = numbers[1] + numbers[2];
-                }else if (level == 3)
-                {
-                    numbers[5] = Random.Range(5, 10);
-                    numbers[4] = Random.Range(10, 25);
-                    numbers[3] = Random.Range(10, 25);
-                    numbers[2] = numbers[4] + numbers[5];
-                    numbers[1] = numbers[3] + numbers[4];
-                    numbers[0] = numbers[1] + numbers[2];
-                }else if (level == 4)
-                {
-                    numbers[5] = Random.Range(10, 25);
-                    numbers[4] = Random.Range(10, 25);
-                    numbers[3] = Random.Range(10, 25);
-                    numbers[2] = numbers[4] + numbers[5];
-                    numbers[1] = numbers[3] + numbers[4];
-                    numbers[0] = numbers[1] + numbers[2];
-                }else if (level == 5)
-                {
-                    numbers[5] = Random.Range(20, 50);
-                    numbers[4] = Random.Range(20, 50);
-                    numbers[3] = Random.Range(20, 50);
-                    numbers[2] = numbers[4] + numbers[5];
-                    numbers[1] = numbers[3] + numbers[4];
-                    numbers[0] = numbers[1] + numbers[2];
-                }
-                else if (level == 6)
-                {
-                    mult2.SetActive(true);
-                    mult3.SetActive(true);
-                    numbers[5] = Random.Range(4, 7);
-                    numbers[4] = Random.Range(4, 6);
-                    numbers[3] = Random.Range(4, 7);
-                    numbers[2] = numbers[4] * numbers[5];
-                    numbers[1] = numbers[3] * numbers[4];
-                    numbers[0] = numbers[1] * numbers[2];
-                }
+
                 if (level < 5)
                 {
                     quesType = Random.Range(0, 4);
@@ -335,6 +357,8 @@ public class TimerSlider : MonoBehaviour
 
             }
 
+
+
             yield return new WaitWhile(() => !picker);
             picker = false;
             BackGround();
@@ -350,34 +374,35 @@ public class TimerSlider : MonoBehaviour
         
         penalty -= 3;
         level++;
+        if(level>0)
         backCount++;
-        if (level == 2)
-        {
-            level = 1;
-            type++;
-            levelUp = true;
-        }else if (level == 10)
+        if (level==0||level == 6 || level == 15)
         {
             type = 2;
-            level = 6;
-            levelUp = true;
-        }else if (type == 2 && level == 7)
-        {
-            //çýkýþ koþulu
+
         }
-        if (type == 3)
+        else if (level==1||level == 11)
         {
             type = 1;
-            level = 6;
-           
+        }else if (level == 16)
+        {
+            stopTimer = true;
         }
         picker = true;
 
     }
     public static void lose()
     {
-        penalty += 3;
-        picker = true;
+        if(level!=0|| level != -1)
+        {
+            penalty += 3;
+            picker = true;
+        }
+        else
+        {
+            picker = true;
+            level++;
+        }
       
     }
     void BackGround()

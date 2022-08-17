@@ -32,7 +32,7 @@ public class NumberScroll : MonoBehaviour
         positionLeft = (((int)left.localPosition.y+63)/100);
         positionRight = (((int)right.localPosition.y+63) / 100);
         LearnEnd = true;
-        pickTime = new bool[12];
+        pickTime = new bool[14];
         for(int i = 0; i < pickTime.Length; i++)
         {
             pickTime[i] = true;
@@ -160,23 +160,82 @@ public class NumberScroll : MonoBehaviour
     }
      IEnumerator HowtoPlay()
     {
-
-        for(int i = 0; i < 3; i++)
+        if (TimerSlider.type == 2)
         {
-            StartCoroutine(Clicker(TimerSlider.quesNum[i],i));
+            TruePick = false;  
+            for (int i = 0; i < 3; i++)
+            {
+                StartCoroutine(Clicker(TimerSlider.quesNum[i], i));
+                yield return new WaitWhile(() => !TruePick);
+                TruePick = false;
+            }
+            StartCoroutine(OnayFade());
             yield return new WaitWhile(() => !TruePick);
-            TruePick = false;
         }
-        StartCoroutine(OnayFade());
-        yield return new WaitWhile(() => !TruePick);
+        else
+        {
+            StartCoroutine(soloClick(TimerSlider.quesNum[0]));
+        } 
        
 
 
+    }
+    IEnumerator soloClick(int k)
+    {
+        Sequence myseq = DOTween.Sequence();
+        myseq.Append(Click[k].DOFade(1,1f)).SetEase(Ease.Linear);
+        myseq.AppendInterval(1f);
+        myseq.Append(Click[k].DOFade(0,1f)).SetEase(Ease.Linear);
+        myseq.SetLoops(5);
+        StartCoroutine(pickTimer(12));
+        yield return new WaitWhile(()=>select!=k&&pickTime[12]);
+        myseq.Kill(false);
+        Click[k].DOFade(0, 0.5f);
+        ques[k].fontSize = 65;
+        if (k == 0)
+        {
+            ques[0].text = ques[1].text + "+" + ques[2].text;
+        }
+        else if (k == 1)
+        {
+            ques[1].text = ques[0].text + "-" + ques[2].text;
+        }
+        else
+        {
+            ques[2].text = ques[0].text + "-" + ques[1].text;
+        }
+        Sequence myse = DOTween.Sequence();
+        myse.Append(Click[6].DOFade(1, 1f)).SetEase(Ease.Linear);
+        myse.AppendInterval(1f);
+        myse.Append(Click[6].DOFade(0, 1f)).SetEase(Ease.Linear);
+        myse.SetLoops(5);
+        StartCoroutine(pickTimer(13));
+        yield return new WaitWhile(() => pickTime[13] && !dragLeft&&!dragRight);
+        myse.Kill(false);
+        Click[6].DOFade(0, 0.5f);
+        if(!pickTime[13])
+        autoPick(TimerSlider.result[0], 13);
+        else 
+        {
+            yield return new WaitWhile(() => pickTime[13]&& int.Parse(ques[k].text) != TimerSlider.result[0]);
+            if(!pickTime[13])
+            autoPick(TimerSlider.result[0], 13);
+        }
+        TimerSlider.timerStart();
+        Sequence mys = DOTween.Sequence();
+        mys.Append(Click[7].DOFade(1, 1f)).SetEase(Ease.Linear);
+        mys.AppendInterval(1f);
+        mys.Append(Click[7].DOFade(0, 1f)).SetEase(Ease.Linear);
+        mys.SetLoops(5);
+        yield return new WaitWhile(() => !Comparator.pick);
+        mys.Kill(false);
+        Click[7].DOFade(0, 0.5f);
     }
     IEnumerator Clicker(int k,int result)
     {
         StartCoroutine(pickTimer(k));
         int counter = 0;
+        select = -1;
         while(select!=k&&pickTime[k])
         {
             for (float i = 0; i <= 1; i += Time.deltaTime)
@@ -209,61 +268,63 @@ public class NumberScroll : MonoBehaviour
             pickTime[k] = true;
         }
         ques[k].fontSize = 65;
-        if (k == 0)
-        {
-            ques[0].text = ques[1].text+ "+"+ ques[2].text;
-            recolor(0, 1, 2);
-
-        }
-        else if(k==1)
-        {
-            if (TimerSlider.quesType == 0)
+        
+            if (k == 0)
             {
-                ques[1].text = ques[3].text +"+"+ ques[4].text;
+                ques[0].text = ques[1].text + "+" + ques[2].text;
+                recolor(0, 1, 2);
+
+            }
+            else if (k == 1)
+            {
+                if (TimerSlider.quesType == 0)
+                {
+                    ques[1].text = ques[3].text + "+" + ques[4].text;
+                    recolor(3, 1, 4);
+                }
+                else
+                {
+                    ques[1].text = ques[0].text + "-" + ques[2].text;
+                    recolor(0, 1, 2);
+                }
+            }
+            else if (k == 2)
+            {
+                if (TimerSlider.quesType == 0)
+                {
+                    ques[2].text = ques[4].text + "+" + ques[5].text;
+                    recolor(4, 5, 2);
+                }
+                else
+                {
+                    ques[2].text = ques[0].text + "-" + ques[1].text;
+                    recolor(0, 1, 2);
+                }
+            }
+            else if (k == 3)
+            {
+                ques[3].text = ques[1].text + "-" + ques[4].text;
                 recolor(3, 1, 4);
             }
-            else
+            else if (k == 4)
             {
-                ques[1].text = ques[0].text + "-" + ques[2].text;
-                recolor(0, 1, 2);
-            }
-        }else if (k == 2)
-        {
-            if (TimerSlider.quesType == 0)
-            {
-                ques[2].text = ques[4].text + "+" + ques[5].text;
-                recolor(4, 5, 2);
-            }
-            else
-            {
-                ques[2].text = ques[0].text + "-" + ques[1].text;
-                recolor(0, 1, 2);
-            }
-        }
-        else if (k == 3)
-        {
-            ques[3].text = ques[1].text + "-" + ques[4].text;
-            recolor(3, 1, 4);
-        }
-        else if (k == 4)
-        {
-            if (TimerSlider.quesType == 1)
-            {
-                ques[4].text = ques[2].text + "-" + ques[5].text;
-                recolor(4, 5, 2);
+                if (TimerSlider.quesType == 1)
+                {
+                    ques[4].text = ques[2].text + "-" + ques[5].text;
+                    recolor(4, 5, 2);
+                }
+                else
+                {
+                    ques[4].text = ques[1].text + "-" + ques[3].text;
+                    recolor(4, 1, 3);
+                }
             }
             else
             {
-                ques[4].text = ques[1].text + "-" + ques[3].text;
-                recolor(4, 1, 3);
-            }
-        }
-        else
-        {
-            ques[5].text = ques[2].text + "-" + ques[4].text;
-            recolor(5, 4, 2);
+                ques[5].text = ques[2].text + "-" + ques[4].text;
+                recolor(5, 4, 2);
 
-        }
+            }
         
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(ScrollFade(k,result));
