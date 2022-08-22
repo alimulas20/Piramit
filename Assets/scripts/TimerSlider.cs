@@ -8,6 +8,8 @@ using DG.Tweening;
 public class TimerSlider : MonoBehaviour
 {
     public Slider timerSlider;
+    public GameObject bg;
+    public GameObject numbersSlots;
     public Text[] num;
     public GameObject[] piramits;
     static int[] numbers=new int[6];
@@ -31,7 +33,8 @@ public class TimerSlider : MonoBehaviour
     
     public static int [] result=new int[3];
     public static int[] quesNum = new int[3];
-
+    public Image playObject;
+    public Image playButton;
 
     
     public float gameTime;
@@ -42,13 +45,14 @@ public class TimerSlider : MonoBehaviour
     public static int level = -1;
     public static int type = 1;
     public static int pickCount;
-    static bool levelUp = false;
+
 
     public static int quesType;
 
     public static bool timeBraker;
     static float brokenTime;
-    bool learnedBefore;
+    bool starter=false;
+    bool first = true;
 
 
     static int backCount; 
@@ -61,57 +65,91 @@ public class TimerSlider : MonoBehaviour
         timerSlider.maxValue = gameTime;
         timerSlider.value = gameTime;
         timeBraker = false;
-        StartCoroutine(numberGenerator());
+       
         backCount = -1;
-        learnedBefore = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float time = gameTime - Time.time;
-        time -= penalty;
-        if (time <= 0&&!stopTimer)
+        
+        if (starter)
         {
-            stopTimer = true;
-            if (!timeBraker)
+            if (playObject.color.a == 0)
             {
-                for (int i = 0; i < piramits.Length; i++)
-                {
-                    piramits[i].SetActive(false);
-                }
-                timerSlider.gameObject.SetActive(false);
-                plus1.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                plus2.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                plus3.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                mult1.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                mult2.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                mult3.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                onay.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                left.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
-                right.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                playObject.gameObject.SetActive(false);
+                playButton.gameObject.SetActive(false);
+
             }
-            
-        }
-        if (stopTimer == false)
-        {
-            if (!timeBraker)
-                timerSlider.value = time;
-
-            for (int i = 0; i < (type + 1) * (type + 2) / 2; i++)
+            if (first)
             {
-
-                if (type == 1 && quesNum[0] != i)
-                    num[i].text = numbers[i].ToString();
-                else if (type == 2)
+                StartCoroutine(numberGenerator());
+                first = false;
+            }
+            float time = gameTime - Time.time;
+            time -= penalty;
+            if (time <= 0 && !stopTimer)
+            {
+                stopTimer = true;
+                if (!timeBraker)
                 {
-                    if (System.Array.IndexOf(quesNum, i) == -1)
+                    for (int i = 0; i < piramits.Length; i++)
                     {
+                        piramits[i].SetActive(false);
+                    }
+                    
+                    plus1.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    plus2.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    plus3.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    mult1.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    mult2.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    mult3.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    onay.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
+                    left.gameObject.SetActive(false);
+                    right.gameObject.SetActive(false);
+                    StartCoroutine(finish());
+                    timerSlider.gameObject.SetActive(false);
+                }
+
+            }
+            if (stopTimer == false)
+            {
+                if (!timeBraker)
+                    timerSlider.value = time;
+
+                for (int i = 0; i < (type + 1) * (type + 2) / 2; i++)
+                {
+
+                    if (type == 1 && quesNum[0] != i)
                         num[i].text = numbers[i].ToString();
+                    else if (type == 2)
+                    {
+                        if (System.Array.IndexOf(quesNum, i) == -1)
+                        {
+                            num[i].text = numbers[i].ToString();
+                        }
                     }
                 }
             }
         }
+        
+    }
+    public void play()
+    {
+        starter = true;
+        playObject.DOFade(0, 1f).SetAutoKill();
+        playButton.DOFade(0, 1f).SetAutoKill();
+        timerSlider.gameObject.SetActive(true);
+        bg.SetActive(true);
+        numbersSlots.SetActive(true);
+        onay.SetActive(true);
+        left.gameObject.SetActive(true);
+        right.gameObject.SetActive(true);
+    }
+    public IEnumerator finish()
+    {
+        yield return new WaitForSeconds(2f);
+        Application.Quit();
     }
     public IEnumerator numberGenerator()
     {
@@ -400,6 +438,11 @@ public class TimerSlider : MonoBehaviour
         }
         else
         {
+            backCount -= 1;
+            if (backCount == -2)
+            {
+                backCount++;
+            }
             penalty += 3;
             picker = true;
 
@@ -409,7 +452,11 @@ public class TimerSlider : MonoBehaviour
     void BackGround()
     {
         if (backCount < 15&&backCount>=0)//resim sayýsý artarsa artabilir
-            back[backCount].DOFade(1, 1f);
+            back[backCount].DOFade(1, 1f).SetAutoKill();
+        if (backCount < 14 && back[backCount + 1].color.a != 0)
+        {
+            back[backCount + 1].DOFade(0, 1.5f).SetEase(Ease.OutElastic).SetAutoKill();
+        }
     }
     public void IncLevel()
     {
@@ -424,8 +471,8 @@ public class TimerSlider : MonoBehaviour
                 t.sizeDelta = dimension;
                 piramits[i].SetActive(true);
                 Image image = piramits[i].GetComponent<Image>();
-                image.DOFade(1, 0.5f);
-                num[i].DOFade(1, 0.5f);
+                image.DOFade(1, 0.5f).SetAutoKill();
+                num[i].DOFade(1, 0.5f).SetAutoKill();
                 if (i == 1 || i == 2)
                 {
                     
@@ -454,9 +501,11 @@ public class TimerSlider : MonoBehaviour
 
             if (i == 1 || i == 2)
             {
-                t.DOLocalMove(konum[i - 1], 0.5f);
+                t.DOLocalMove(konum[i - 1], 0.5f).SetAutoKill();
+                
                 mult1.SetActive(true);
                 mult1.transform.localPosition = new Vector3(0, -275, 0);
+                plus1.transform.localPosition = new Vector3(0, -275, 0);
             }
 
         }

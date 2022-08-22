@@ -10,7 +10,6 @@ public class NumberScroll : MonoBehaviour
     public Transform left;
     public Transform right;
     public Text [] ques;
-    public AudioSource scroll;
     public Image [] Click;
     public Button[] buttons;
 
@@ -31,8 +30,8 @@ public class NumberScroll : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        positionLeft = (((int)left.localPosition.y+63)/100);
-        positionRight = (((int)right.localPosition.y+63) / 100);
+        positionLeft = (((int)left.localPosition.y+73)/150);
+        positionRight = (((int)right.localPosition.y+73) / 150);
         LearnEnd = true;
         pickTime = new bool[14];
         for(int i = 0; i < pickTime.Length; i++)
@@ -59,9 +58,8 @@ public class NumberScroll : MonoBehaviour
         }
         if ((dragLeft || dragRight)&&pickWaiter)
         {
-            scroll.UnPause();
-            positionLeft = (((int)left.localPosition.y + 63) / 100);
-            positionRight = (((int)right.localPosition.y + 63) / 100);
+            positionLeft = (((int)left.localPosition.y + 73) / 150);
+            positionRight = (((int)right.localPosition.y + 73) / 150);
             if (positionLeft > 9)
             {
                 positionLeft = 9;
@@ -76,15 +74,13 @@ public class NumberScroll : MonoBehaviour
             
             
         }
-        /*else
-            scroll.Pause();*/
         if (!dragLeft)
         {
-            lerpLeft(positionLeft * 100);
+            lerpLeft(positionLeft * 150);
         }
         if (!dragRight)
         {
-            lerpRight(positionRight * 100);
+            lerpRight(positionRight * 150);
         }
        
     }
@@ -198,15 +194,15 @@ public class NumberScroll : MonoBehaviour
     {
         TrueSelect = k;
         Sequence myseq = DOTween.Sequence();
-        myseq.Append(Click[k].DOFade(1,1f)).SetEase(Ease.Linear);
+        myseq.Append(Click[k].DOFade(1,1f)).SetEase(Ease.Linear).SetAutoKill();
         myseq.AppendInterval(1f);
-        myseq.Append(Click[k].DOFade(0,1f)).SetEase(Ease.Linear);
+        myseq.Append(Click[k].DOFade(0,1f)).SetEase(Ease.Linear).SetAutoKill();
         myseq.SetLoops(5);
         StartCoroutine(pickTimer(12));
         yield return new WaitWhile(()=>!pickWaiter&&pickTime[12]);
         pickWaiter = true;
         myseq.Kill(false);
-        Click[k].DOFade(0, 0.5f);
+        Click[k].DOFade(0, 0.5f).SetAutoKill();
         ques[k].fontSize = 65;
         if (k == 0)
         {
@@ -221,14 +217,14 @@ public class NumberScroll : MonoBehaviour
             ques[2].text = ques[0].text + "-" + ques[1].text;
         }
         Sequence myse = DOTween.Sequence();
-        myse.Append(Click[6].DOFade(1, 1f)).SetEase(Ease.Linear);
+        myse.Append(Click[6].DOFade(1, 1f)).SetEase(Ease.Linear).SetAutoKill();
         myse.AppendInterval(1f);
-        myse.Append(Click[6].DOFade(0, 1f)).SetEase(Ease.Linear);
+        myse.Append(Click[6].DOFade(0, 1f)).SetEase(Ease.Linear).SetAutoKill();
         myse.SetLoops(5);
         StartCoroutine(pickTimer(13));
         yield return new WaitWhile(() => pickTime[13] && !dragLeft&&!dragRight);
         myse.Kill(false);
-        Click[6].DOFade(0, 0.5f);
+        Click[6].DOFade(0, 0.5f).SetAutoKill();
         if(!pickTime[13])
         autoPick(TimerSlider.result[0], 13);
         else 
@@ -239,13 +235,13 @@ public class NumberScroll : MonoBehaviour
         }
         TimerSlider.timerStart();
         Sequence mys = DOTween.Sequence();
-        mys.Append(Click[7].DOFade(1, 1f)).SetEase(Ease.Linear);
+        mys.Append(Click[7].DOFade(1, 1f)).SetEase(Ease.Linear).SetAutoKill();
         mys.AppendInterval(1f);
-        mys.Append(Click[7].DOFade(0, 1f)).SetEase(Ease.Linear);
+        mys.Append(Click[7].DOFade(0, 1f)).SetEase(Ease.Linear).SetAutoKill();
         mys.SetLoops(5);
         yield return new WaitWhile(() => !Comparator.pick);
         mys.Kill(false);
-        Click[7].DOFade(0, 0.5f);
+        Click[7].DOFade(0, 0.5f).SetAutoKill();
     }
     IEnumerator tripleClick()
     {
@@ -258,15 +254,15 @@ public class NumberScroll : MonoBehaviour
             TrueSelect = k;
             select = k;
             Sequence myseq = DOTween.Sequence();
-            myseq.Append(Click[k].DOFade(1, 1f)).SetEase(Ease.Linear);
+            myseq.Append(Click[k].DOFade(1, 1f)).SetEase(Ease.Linear).SetAutoKill();
             myseq.AppendInterval(1f);
-            myseq.Append(Click[k].DOFade(0, 1f)).SetEase(Ease.Linear);
+            myseq.Append(Click[k].DOFade(0, 1f)).SetEase(Ease.Linear).SetAutoKill();
             myseq.SetLoops(5);
             StartCoroutine(pickTimer(i));
             yield return new WaitWhile(() => /*select != k*/ !pickWaiter && pickTime[i]);
             pickWaiter = true;
             myseq.Kill(false);
-            Click[k].DOFade(0, 0.5f);
+            Click[k].DOFade(0, 0.5f).SetAutoKill();
             ques[k].fontSize = 65;
             if (k == 0)
             {
@@ -325,9 +321,9 @@ public class NumberScroll : MonoBehaviour
 
             }
             Sequence myse = DOTween.Sequence();
-            myse.Append(Click[6].DOFade(1, 1f)).SetEase(Ease.Linear);
+            myse.Append(Click[6].DOFade(1, 1f)).SetEase(Ease.Linear).SetAutoKill();
             myse.AppendInterval(1f);
-            myse.Append(Click[6].DOFade(0, 1f)).SetEase(Ease.Linear);
+            myse.Append(Click[6].DOFade(0, 1f)).SetEase(Ease.Linear).SetAutoKill();
             myse.SetLoops(5);
             StartCoroutine(pickTimer(i+5));
             yield return new WaitWhile(() => pickTime[i+5] && !dragLeft && !dragRight);
@@ -335,14 +331,14 @@ public class NumberScroll : MonoBehaviour
             myseq1.Kill(true);
             myseq2.Kill(true);
             myseq3.Kill(true);
-            Click[6].DOFade(0, 0.5f);
+            Click[6].DOFade(0, 0.5f).SetAutoKill();
             if (!pickTime[i+5])
                 autoPick(TimerSlider.result[i], i+5);
             else
             {
                 yield return new WaitWhile(() => pickTime[i+5] && int.Parse(ques[k].text) != TimerSlider.result[i]);
                 if (!pickTime[i+5])
-                    autoPick(TimerSlider.result[0], i+5);
+                    autoPick(TimerSlider.result[i], i+5);
             }
 
         }
@@ -350,14 +346,14 @@ public class NumberScroll : MonoBehaviour
 
         TimerSlider.timerStart();
         Sequence mys = DOTween.Sequence();
-        mys.Append(Click[7].DOFade(1, 1f)).SetEase(Ease.Linear);
+        mys.Append(Click[7].DOFade(1, 1f)).SetEase(Ease.Linear).SetAutoKill();
         mys.AppendInterval(1f);
-        mys.Append(Click[7].DOFade(0, 1f)).SetEase(Ease.Linear);
+        mys.Append(Click[7].DOFade(0, 1f)).SetEase(Ease.Linear).SetAutoKill();
         mys.SetLoops(5);
         yield return new WaitWhile(() => !Comparator.pick);
         pickWaiter = true;
         mys.Kill(false);
-        Click[7].DOFade(0, 0.5f);
+        Click[7].DOFade(0, 0.5f).SetAutoKill();
     }
     /*
     IEnumerator Clicker(int k,int result)
@@ -466,16 +462,16 @@ public class NumberScroll : MonoBehaviour
         myseq2 = DOTween.Sequence();
         myseq3 = DOTween.Sequence();
 
-        myseq1.Append( buttons[index1].image.DOColor(Color.green, 1f));
-        myseq1.Append(buttons[index1].image.DOColor(new Color(1, 1, 1), 1f));
+        myseq1.Append( buttons[index1].image.DOColor(Color.green, 1f)).SetAutoKill();
+        myseq1.Append(buttons[index1].image.DOColor(new Color(1, 1, 1), 1f)).SetAutoKill();
      
 
-        myseq2.Append(buttons[index2].image.DOColor(Color.green, 1f));
-        myseq2.Append(buttons[index2].image.DOColor(new Color(1, 1, 1), 1f));
+        myseq2.Append(buttons[index2].image.DOColor(Color.green, 1f)).SetAutoKill();
+        myseq2.Append(buttons[index2].image.DOColor(new Color(1, 1, 1), 1f)).SetAutoKill();
 
 
-        myseq3.Append(buttons[index3].image.DOColor(Color.green, 1f));
-        myseq3.Append(buttons[index3].image.DOColor(new Color(1, 1, 1), 1f));
+        myseq3.Append(buttons[index3].image.DOColor(Color.green, 1f)).SetAutoKill();
+        myseq3.Append(buttons[index3].image.DOColor(new Color(1, 1, 1), 1f)).SetAutoKill();
 
         myseq1.SetLoops(5);
         myseq2.SetLoops(5);
