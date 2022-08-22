@@ -393,15 +393,16 @@ public class TimerSlider : MonoBehaviour
     }
     public static void lose()
     {
-        if(level!=0|| level != -1)
+        if(level==-1||level==0)
         {
-            penalty += 3;
+            level++;
             picker = true;
         }
         else
         {
+            penalty += 3;
             picker = true;
-            level++;
+
         }
       
     }
@@ -428,10 +429,10 @@ public class TimerSlider : MonoBehaviour
                 if (i == 1 || i == 2)
                 {
                     
-                    t.DOLocalMove(new Vector3(140 * Mathf.Pow(-1, i), -225, 0),0.5f).SetEase(Ease.Linear).SetAutoKill();
+                    t.DOLocalMove(new Vector3(145 * Mathf.Pow(-1, i), -230, 0),0.5f).SetEase(Ease.Linear).SetAutoKill();
                     konum[i-1] = t.localPosition;
-                    mult1.transform.DOLocalMove(new Vector3(0, -225, 0),0.5f).SetEase(Ease.Linear).SetAutoKill();
-                    plus1.transform.DOLocalMove(new Vector3(0, -225, 0), 0.5f).SetEase(Ease.Linear).SetAutoKill();
+                    mult1.transform.DOLocalMove(new Vector3(0, -230, 0),0.5f).SetEase(Ease.Linear).SetAutoKill();
+                    plus1.transform.DOLocalMove(new Vector3(0, -230, 0), 0.5f).SetEase(Ease.Linear).SetAutoKill();
                 }
                 
             }
@@ -445,7 +446,7 @@ public class TimerSlider : MonoBehaviour
         {
             RectTransform t = piramits[i].GetComponent<RectTransform>();
             Vector2 dimension = t.sizeDelta;
-            dimension.x = 250;
+            dimension.x = 300;
             dimension.y = 150;
             t.sizeDelta = dimension;
             if (i > 2)
@@ -455,7 +456,7 @@ public class TimerSlider : MonoBehaviour
             {
                 t.DOLocalMove(konum[i - 1], 0.5f);
                 mult1.SetActive(true);
-                mult1.transform.localPosition = new Vector3(0, -250, 0);
+                mult1.transform.localPosition = new Vector3(0, -275, 0);
             }
 
         }

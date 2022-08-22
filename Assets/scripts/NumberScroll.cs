@@ -20,7 +20,9 @@ public class NumberScroll : MonoBehaviour
     public static int select=-1;
     bool dragLeft = false;
     bool dragRight = false;
-    bool TruePick;
+    bool truePick;
+    bool pickWaiter;
+    int TrueSelect;
     public static bool LearnEnd;
     bool [] pickTime;//doðru seçim zamanlamasý için
     Sequence myseq1;
@@ -37,7 +39,8 @@ public class NumberScroll : MonoBehaviour
         {
             pickTime[i] = true;
         }
-        
+        truePick = true;
+        pickWaiter = false;
     }
 
     // Update is called once per frame
@@ -51,9 +54,10 @@ public class NumberScroll : MonoBehaviour
         if (TimerSlider.timeBraker&&LearnEnd)
         {
             LearnEnd = false;
-            StartCoroutine(HowtoPlay());
+            HowtoPlay();
+            truePick = false;
         }
-        if (dragLeft || dragRight)
+        if ((dragLeft || dragRight)&&pickWaiter)
         {
             scroll.UnPause();
             positionLeft = (((int)left.localPosition.y + 63) / 100);
@@ -72,8 +76,8 @@ public class NumberScroll : MonoBehaviour
             
             
         }
-        else
-            scroll.Pause();
+        /*else
+            scroll.Pause();*/
         if (!dragLeft)
         {
             lerpLeft(positionLeft * 100);
@@ -122,10 +126,6 @@ public class NumberScroll : MonoBehaviour
     {
         dragRight = false;
     }
-    public void select1()
-    {
-        select = 0;
-    }
     void lerpLeft(int position)
     {
         float newY = Mathf.Lerp(left.localPosition.y, position, Time.deltaTime * 30f);
@@ -138,39 +138,53 @@ public class NumberScroll : MonoBehaviour
         Vector2 newPos = new Vector2(right.localPosition.x, newY);
         right.localPosition = newPos;
     }
+    public void select1()
+    {
+        if (truePick)
+            select = 0;
+        else if (TrueSelect == 0)
+            pickWaiter = true;
+    }
     public void select2()
     {
-        select = 1;
+        if (truePick)
+            select = 1;
+        else if (TrueSelect == 1)
+            pickWaiter=true;
     }
     public void select3()
     {
-        select = 2;
+        if (truePick)
+            select = 2;
+        else if (TrueSelect == 2)
+            pickWaiter=true;
     }
     public void select4()
     {
-        select = 3;
+        if (truePick)
+            select = 3;
+        else if (TrueSelect == 3)
+            pickWaiter=true;
     }
     public void select5()
     {
-        select = 4;
+        if (truePick)
+            select = 4;
+        else if (TrueSelect == 4)
+            pickWaiter=true;
     }
     public void select6()
     {
-        select = 5;
+        if (truePick)
+            select = 5;
+        else if (TrueSelect == 5)
+            pickWaiter=true;
     }
-     IEnumerator HowtoPlay()
+     void HowtoPlay()
     {
         if (TimerSlider.type == 2)
-        {
-            TruePick = false;  
-            for (int i = 0; i < 3; i++)
-            {
-                StartCoroutine(Clicker(TimerSlider.quesNum[i], i));
-                yield return new WaitWhile(() => !TruePick);
-                TruePick = false;
-            }
-            StartCoroutine(OnayFade());
-            yield return new WaitWhile(() => !TruePick);
+        {  
+            StartCoroutine(tripleClick());
         }
         else
         {
@@ -182,13 +196,15 @@ public class NumberScroll : MonoBehaviour
     }
     IEnumerator soloClick(int k)
     {
+        TrueSelect = k;
         Sequence myseq = DOTween.Sequence();
         myseq.Append(Click[k].DOFade(1,1f)).SetEase(Ease.Linear);
         myseq.AppendInterval(1f);
         myseq.Append(Click[k].DOFade(0,1f)).SetEase(Ease.Linear);
         myseq.SetLoops(5);
         StartCoroutine(pickTimer(12));
-        yield return new WaitWhile(()=>select!=k&&pickTime[12]);
+        yield return new WaitWhile(()=>!pickWaiter&&pickTime[12]);
+        pickWaiter = true;
         myseq.Kill(false);
         Click[k].DOFade(0, 0.5f);
         ques[k].fontSize = 65;
@@ -231,6 +247,119 @@ public class NumberScroll : MonoBehaviour
         mys.Kill(false);
         Click[7].DOFade(0, 0.5f);
     }
+    IEnumerator tripleClick()
+    {
+        Comparator.pick = false;
+        for(int i = 0; i < TimerSlider.quesNum.Length; i++)
+        {
+            pickWaiter = false;
+            truePick = false;
+            int k = TimerSlider.quesNum[i];
+            TrueSelect = k;
+            select = k;
+            Sequence myseq = DOTween.Sequence();
+            myseq.Append(Click[k].DOFade(1, 1f)).SetEase(Ease.Linear);
+            myseq.AppendInterval(1f);
+            myseq.Append(Click[k].DOFade(0, 1f)).SetEase(Ease.Linear);
+            myseq.SetLoops(5);
+            StartCoroutine(pickTimer(i));
+            yield return new WaitWhile(() => /*select != k*/ !pickWaiter && pickTime[i]);
+            pickWaiter = true;
+            myseq.Kill(false);
+            Click[k].DOFade(0, 0.5f);
+            ques[k].fontSize = 65;
+            if (k == 0)
+            {
+                ques[0].text = ques[1].text + "+" + ques[2].text;
+                recolor(0, 1, 2);
+
+            }
+            else if (k == 1)
+            {
+                if (TimerSlider.quesType == 0)
+                {
+                    ques[1].text = ques[3].text + "+" + ques[4].text;
+                    recolor(3, 1, 4);
+                }
+                else
+                {
+                    ques[1].text = ques[0].text + "-" + ques[2].text;
+                    recolor(0, 1, 2);
+                }
+            }
+            else if (k == 2)
+            {
+                if (TimerSlider.quesType == 0)
+                {
+                    ques[2].text = ques[4].text + "+" + ques[5].text;
+                    recolor(4, 5, 2);
+                }
+                else
+                {
+                    ques[2].text = ques[0].text + "-" + ques[1].text;
+                    recolor(0, 1, 2);
+                }
+            }
+            else if (k == 3)
+            {
+                ques[3].text = ques[1].text + "-" + ques[4].text;
+                recolor(3, 1, 4);
+            }
+            else if (k == 4)
+            {
+                if (TimerSlider.quesType == 1)
+                {
+                    ques[4].text = ques[2].text + "-" + ques[5].text;
+                    recolor(4, 5, 2);
+                }
+                else
+                {
+                    ques[4].text = ques[1].text + "-" + ques[3].text;
+                    recolor(4, 1, 3);
+                }
+            }
+            else
+            {
+                ques[5].text = ques[2].text + "-" + ques[4].text;
+                recolor(5, 4, 2);
+
+            }
+            Sequence myse = DOTween.Sequence();
+            myse.Append(Click[6].DOFade(1, 1f)).SetEase(Ease.Linear);
+            myse.AppendInterval(1f);
+            myse.Append(Click[6].DOFade(0, 1f)).SetEase(Ease.Linear);
+            myse.SetLoops(5);
+            StartCoroutine(pickTimer(i+5));
+            yield return new WaitWhile(() => pickTime[i+5] && !dragLeft && !dragRight);
+            myse.Kill(false);
+            myseq1.Kill(true);
+            myseq2.Kill(true);
+            myseq3.Kill(true);
+            Click[6].DOFade(0, 0.5f);
+            if (!pickTime[i+5])
+                autoPick(TimerSlider.result[i], i+5);
+            else
+            {
+                yield return new WaitWhile(() => pickTime[i+5] && int.Parse(ques[k].text) != TimerSlider.result[i]);
+                if (!pickTime[i+5])
+                    autoPick(TimerSlider.result[0], i+5);
+            }
+
+        }
+        truePick = true;
+
+        TimerSlider.timerStart();
+        Sequence mys = DOTween.Sequence();
+        mys.Append(Click[7].DOFade(1, 1f)).SetEase(Ease.Linear);
+        mys.AppendInterval(1f);
+        mys.Append(Click[7].DOFade(0, 1f)).SetEase(Ease.Linear);
+        mys.SetLoops(5);
+        yield return new WaitWhile(() => !Comparator.pick);
+        pickWaiter = true;
+        mys.Kill(false);
+        Click[7].DOFade(0, 0.5f);
+    }
+    /*
     IEnumerator Clicker(int k,int result)
     {
         StartCoroutine(pickTimer(k));
@@ -330,7 +459,7 @@ public class NumberScroll : MonoBehaviour
         StartCoroutine(ScrollFade(k,result));
         
        
-    }
+    }*/
     void recolor(int index1,int index2,int index3)
     {
         myseq1 = DOTween.Sequence();
@@ -353,7 +482,7 @@ public class NumberScroll : MonoBehaviour
         myseq3.SetLoops(5);
 
     }
-
+    /*
     IEnumerator ScrollFade(int k,int result)
     {
         
@@ -427,6 +556,7 @@ public class NumberScroll : MonoBehaviour
         TruePick = true;
         
     }
+    */
     IEnumerator pickTimer(int k)
     {
         float StartTime = Time.time;
@@ -436,11 +566,13 @@ public class NumberScroll : MonoBehaviour
     }
     void autoPick(int result,int k)
     {
-        
+        pickWaiter = false;
         positionLeft = result/10;
         positionRight = result%10;
         write();
         pickTime[k] = true;
+        select = -1;
+        
         
     }
    
@@ -449,4 +581,5 @@ public class NumberScroll : MonoBehaviour
         right.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
         left.GetComponent<Image>().DOFade(0, 0.5f).SetAutoKill();
     }
+    
 }
